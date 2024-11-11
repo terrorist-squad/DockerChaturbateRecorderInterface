@@ -82,7 +82,6 @@ class Command(BaseCommand):
             slug = slugify(item.title)
 
             logger.debug(slug)
-            logger.debug(slug)
 
             containerName = str(self.containerPrefix + slug)
             logger.debug('- check ' + containerName)
@@ -97,16 +96,11 @@ class Command(BaseCommand):
                 if int(os.environ['LIMIT_MAXIMUM_DOWNLOADS']) != 0 and len(containers) > int(os.environ['LIMIT_MAXIMUM_DOWNLOADS']):
                     break
 
-                response = requests.get(str("https://chaturbate.com/" + item.title + '/'))
-                decode = response.text.replace("\\u0022", '"')
+                GetStreamCommand = f"curl https://chaturbate.com/api/chatvideocontext/{title}/ | grep -o '\"hls_source\":\s*\"[^\"]*\"' | sed 's/\"hls_source\":\s*\"//;s/\"//g'"
+                stream = subprocess.run(GetStreamCommand, shell=True, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, check=True).stdout.decode().strip()
 
-
-
-                streams = re.findall(r'"(https?://[^"]*m3u8[^"]*)"', decode)
-
-                for stream in streams:
+                if stream:
                         print(stream)
-                        logger.debug(stream)
                         logger.debug(stream)
 
                         try:
